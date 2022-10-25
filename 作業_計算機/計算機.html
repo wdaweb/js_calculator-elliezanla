@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>計算機</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    /* 星空背景 */
+    * {
+      cursor: url(./img/stars.png), auto;
+    }
+
+    body {
+      background-image: url(./img/sky-night.jpg);
+
+
+    }
+
+    /* 計算機本體 */
+    #cal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 3px solid #8753a5;
+      border-radius: 5px;
+      border-spacing: 4px;
+      background: linear-gradient(180deg, rgba(4, 3, 9, .7), rgba(51, 38, 64, .7), rgba(79, 44, 50, .7));
+    }
+
+    /* 每一格 */
+    td {
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      text-shadow:
+        1px 1px 1px rgba(3, 2, 2, 0.5),
+        0 0 5px #8753a5,
+        0 0 25px #8753a5;
+      font-size: 2rem;
+      font-family: 'Press Start 2P', cursive;
+      color: rgba(255, 255, 255, .7);
+      background: rgba(159, 67, 214, 0.2);
+      border: 1px solid #8753a5ef;
+    }
+
+    /* 每一格hover後 */
+    td:not(#text):hover {
+      background: rgba(159, 67, 214, 0.7);
+      text-shadow:
+        0 0 5px rgb(255, 230, 0),
+        0 0 5px rgb(255, 230, 0),
+        0 0 25px #8753a5;
+      box-shadow:
+        0 0 5px rgba(159, 67, 214, 0.6),
+        0 0 25px rgba(159, 67, 214, 0.6),
+        0 0 50px rgba(159, 67, 214, 0.6),
+        0 0 100px rgba(159, 67, 214, 0.6);
+      transform: scale(1.05);
+      cursor: url(./img/star.png), auto;
+    }
+
+    /* 計算顯示欄位 */
+    #text {
+      border: none;
+      background: rgba(159, 67, 214, .05);
+      height: 150px;
+      text-align: right;
+      font-size: 3rem;
+      padding-right: 2.5rem;
+      font-weight: bold;
+      color: rgb(255, 230, 0);
+    }
+  </style>
+</head>
+
+<body>
+  <table id="cal">
+    <tr>
+      <td colspan="4" id="text">0</td>
+    </tr>
+    <tr>
+      <td>C</td>
+      <td>/</td>
+      <td>*</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>8</td>
+      <td>9</td>
+      <td rowspan="2">+</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>5</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td rowspan="2">=</td>
+    </tr>
+    <tr>
+      <td colspan="2">0</td>
+      <td>.</td>
+    </tr>
+  </table>
+
+  <script>
+    const text = document.getElementById('text')
+    // :not 選到id不是text的
+    const btns = document.querySelectorAll('td:not(#text)')
+
+
+    let reset = false;
+    for (const btn of btns) {
+      btn.onclick = () => {
+        const btnText = btn.innerText
+        if (btnText === '=') {
+          // eval() 若字串是運算式，會執行出運算結果。
+          // eval() 可以是組合字串、數學運算式、單純字串等，若沒有填值，則 eval 返回 undefined。
+          text.innerText = eval(text.innerText)
+          reset = true;
+        } else if (btnText === 'C') {
+          text.innerText = '0'
+        } else {
+          if (text.innerText === '-' && isNaN(parseInt(btnText))) return
+          if (text.innerText !== '0' && !reset) {
+            text.innerText += btnText
+          } else if (!['+', '*', '/'].includes(btnText) || reset) {
+            text.innerText = btnText
+            reset = false
+          }
+        }
+      }
+    }
+
+    document.onkeydown = event => {
+      const btnText = event.key
+      if (btnText === 'Enter' || btnText === '=') {
+        text.innerText = eval(text.innerText)
+        reset = true;
+      } else if (btnText === 'C') {
+        text.innerText = '0'
+      } else {
+        if (text.innerText === '-' && isNaN(parseInt(btnText))) return
+        if (!['+', '*', '/', '-'].includes(btnText) && !btnText.match(/[0-9.]/g)) return
+        if (text.innerText !== '0' && !reset) {
+          text.innerText += btnText
+        } else if (!['+', '*', '/'].includes(btnText) || reset) {
+          text.innerText = btnText
+          reset = false
+        }
+      }
+    }
+  </script>
+
+</body>
+
+</html>
